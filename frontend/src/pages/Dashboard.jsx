@@ -4,13 +4,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { createStyles, Navbar, Group, Code, Box, Avatar, Header } from '@mantine/core';
 import { Home as HomeIcon, Table as TableIcon, Logout } from 'tabler-icons-react';
 import Home from './home/Home';
-// import Products from './products';
+import Lottery from './lottery';
 // import ProductLogs from './productLogs';
 // import ProductGroups from './productGroups';
 
 const data = [
   { page: 'home', label: '首页', icon: HomeIcon, active: true },
-  // { page: 'products', label: '资产台账', icon: TableIcon },
+  { page: 'lottery', label: '抽奖设置', icon: TableIcon },
   // { page: 'productLogs', label: '资产使用台账', icon: TableIcon },
   // { page: 'productsGroups', label: '资产类型', icon: TableIcon },
 ];
@@ -42,8 +42,7 @@ const Dashboard = () => {
       onClick={(event) => {
         setNav(item.page);
         setActive(item.page);
-      }}
-    >
+      }}>
       <item.icon className={classes.linkIcon} />
       <span>{item.label}</span>
     </a>
@@ -60,7 +59,7 @@ const Dashboard = () => {
       <Navbar height={window.innerHeight} width={{ sm: 270 }} p="md">
         <Navbar.Section grow>
           <Group className={classes.header} position="apart">
-            未来大厦资产管理系统
+            CJ管理系统
             <Code sx={{ fontWeight: 700 }}>v1.0.0</Code>
           </Group>
           {links}
@@ -82,13 +81,12 @@ const Dashboard = () => {
             justifyContent: 'flex-end',
             alignItems: 'center',
             paddingRight: '16px',
-          }}
-        >
+          }}>
           <Avatar src="https://avatars.githubusercontent.com/u/10353856?s=460&u=88394dfd67727327c1f7670a1764dc38a8a24831&v=4" />
         </Header>
         {/* {indexPage} */}
         {nav === 'home' ? <Home /> : null}
-        {/*{nav === 'products' ? <Products /> : null}*/}
+        {nav === 'lottery' ? <Lottery /> : null}
         {/*{nav === 'productLogs' ? <ProductLogs /> : null}*/}
         {/*{nav === 'productsGroups' ? <ProductGroups /> : null}*/}
       </Box>
@@ -102,13 +100,17 @@ const useStyles = createStyles((theme, _params, getRef) => {
     header: {
       paddingBottom: theme.spacing.md,
       marginBottom: theme.spacing.md * 1.5,
-      borderBottom: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]}`,
+      borderBottom: `1px solid ${
+        theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
+      }`,
     },
 
     footer: {
       paddingTop: theme.spacing.md,
       marginTop: theme.spacing.md,
-      borderTop: `1px solid ${theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]}`,
+      borderTop: `1px solid ${
+        theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[2]
+      }`,
     },
 
     link: {
@@ -124,7 +126,8 @@ const useStyles = createStyles((theme, _params, getRef) => {
       cursor: 'pointer',
 
       '&:hover': {
-        backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
+        backgroundColor:
+          theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
         color: theme.colorScheme === 'dark' ? theme.white : theme.black,
 
         [`& .${icon}`]: {
@@ -145,7 +148,10 @@ const useStyles = createStyles((theme, _params, getRef) => {
           theme.colorScheme === 'dark'
             ? theme.fn.rgba(theme.colors[theme.primaryColor][8], 0.25)
             : theme.colors[theme.primaryColor][0],
-        color: theme.colorScheme === 'dark' ? theme.white : theme.colors[theme.primaryColor][7],
+        color:
+          theme.colorScheme === 'dark'
+            ? theme.white
+            : theme.colors[theme.primaryColor][7],
         [`& .${icon}`]: {
           color: theme.colors[theme.primaryColor][theme.colorScheme === 'dark' ? 5 : 7],
         },

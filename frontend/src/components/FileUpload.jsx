@@ -5,7 +5,7 @@ import { useForm } from '@mantine/form';
 import { useState, useContext } from 'react';
 import _ from 'lodash';
 import axios from 'axios';
-import { FileUploadContext } from '../pages/products/AddForm';
+import { FileUploadContext } from '../pages/lottery/AddForm';
 import { showNotification } from '@mantine/notifications';
 
 function getIconColor(status, theme) {
@@ -32,7 +32,11 @@ function ImageUploadIcon({ status, ...props }) {
 
 export const dropzoneChildren = (status, theme) => (
   <Group position="center" spacing="xl" style={{ minHeight: 120, pointerEvents: 'none' }}>
-    <ImageUploadIcon status={status} style={{ color: getIconColor(status, theme) }} size={80} />
+    <ImageUploadIcon
+      status={status}
+      style={{ color: getIconColor(status, theme) }}
+      size={80}
+    />
 
     <div>
       <Text size="xl" inline>
@@ -51,7 +55,9 @@ const FileUpload = (onDrop) => {
   // const [file, setFile] = useState(null);
   const [url, setUrl] = useState(null);
 
-  const { file, setFile,
+  const {
+    file,
+    setFile,
     // imageUrl, setImageUrl
   } = useContext(FileUploadContext);
 
@@ -110,8 +116,7 @@ const FileUpload = (onDrop) => {
           onDrop={(files) => onDropHandler(files)}
           onReject={(files) => console.log('rejected files', files)}
           maxSize={3 * 1024 ** 2}
-          accept={IMAGE_MIME_TYPE}
-        >
+          accept={IMAGE_MIME_TYPE}>
           {(status) => dropzoneChildren(status, theme)}
         </Dropzone>
       )}

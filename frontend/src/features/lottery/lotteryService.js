@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-const API_URL = '/api/products/';
+const API_URL = '/api/lottery/';
 
-// Create new Product
-const createProduct = async (ProductData, token) => {
+// Create new Lottery
+const createLottery = async (ProductData, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -15,8 +15,8 @@ const createProduct = async (ProductData, token) => {
   return response.data;
 };
 
-// Update user Product
-const updateProduct = async (ProductData, token) => {
+// Update user Lottery
+const updateLottery = async (ProductData, token) => {
   const { _id } = ProductData;
   const config = {
     headers: {
@@ -29,8 +29,8 @@ const updateProduct = async (ProductData, token) => {
   return response.data;
 };
 
-// Get user product
-const getProducts = async (token) => {
+// Get user lottery
+const getLotterys = async (token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -42,8 +42,8 @@ const getProducts = async (token) => {
   return response.data;
 };
 
-// Delete user Product
-const deleteProduct = async (ProductId, token) => {
+// Delete user Lottery
+const deleteLottery = async (ProductId, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -56,23 +56,23 @@ const deleteProduct = async (ProductId, token) => {
 };
 
 // queryProductByType
-const queryProductByType = async (ProductData, token) => {
-  const config = {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  };
+// const queryProductByType = async (ProductData, token) => {
+//   const config = {
+//     headers: {
+//       Authorization: `Bearer ${token}`,
+//     },
+//   };
+//
+//   const response = await axios.post(`${API_URL}queryProductByType`, ProductData, config);
+//   return response.data;
+// };
 
-  const response = await axios.post(`${API_URL}queryProductByType`, ProductData, config);
-  return response.data;
+const lotteryService = {
+  createLottery,
+  updateLottery,
+  getLotterys,
+  deleteLottery,
+  // queryProductByType,
 };
 
-const productService = {
-  createProduct,
-  updateProduct,
-  getProducts,
-  deleteProduct,
-  queryProductByType,
-};
-
-export default productService;
+export default lotteryService;

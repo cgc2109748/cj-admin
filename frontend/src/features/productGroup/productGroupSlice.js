@@ -10,52 +10,72 @@ const initialState = {
 };
 
 // Create new productGroup
-export const createProductGroup = createAsyncThunk('productGroups/create', async (productGroupData, thunkAPI) => {
-  try {
-    const token = thunkAPI.getState().auth.user.token;
-    return await productGroupService.createProductGroup(productGroupData, token);
-  } catch (error) {
-    const message =
-      (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-    return thunkAPI.rejectWithValue(message);
-  }
-});
+export const createProductGroup = createAsyncThunk(
+  'productGroups/create',
+  async (productGroupData, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await productGroupService.createProductGroup(productGroupData, token);
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  },
+);
 
 // Get user productGroup
-export const getProductGroups = createAsyncThunk('productGroups/getAll', async (_, thunkAPI) => {
-  try {
-    const token = thunkAPI.getState().auth.user.token;
-    return await productGroupService.getProductGroups(token);
-  } catch (error) {
-    const message =
-      (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-    return thunkAPI.rejectWithValue(message);
-  }
-});
+export const getProductGroups = createAsyncThunk(
+  'productGroups/getAll',
+  async (_, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await productGroupService.getProductGroups(token);
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  },
+);
 
-// Update  product
-export const updateProductGroup = createAsyncThunk('productGroups/update', async (updateProductGroup, thunkAPI) => {
-  try {
-    const token = thunkAPI.getState().auth.user.token;
-    return await productGroupService.updateProductGroup(updateProductGroup, token);
-  } catch (error) {
-    const message =
-      (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-    return thunkAPI.rejectWithValue(message);
-  }
-});
+// Update  lottery
+export const updateProductGroup = createAsyncThunk(
+  'productGroups/update',
+  async (updateProductGroup, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await productGroupService.updateProductGroup(updateProductGroup, token);
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  },
+);
 
-// Delete user product
-export const deleteProductGroup = createAsyncThunk('productGroups/delete', async (id, thunkAPI) => {
-  try {
-    const token = thunkAPI.getState().auth.user.token;
-    return await productGroupService.deleteProductGroup(id, token);
-  } catch (error) {
-    const message =
-      (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-    return thunkAPI.rejectWithValue(message);
-  }
-});
+// Delete user lottery
+export const deleteProductGroup = createAsyncThunk(
+  'productGroups/delete',
+  async (id, thunkAPI) => {
+    try {
+      const token = thunkAPI.getState().auth.user.token;
+      return await productGroupService.deleteProductGroup(id, token);
+    } catch (error) {
+      const message =
+        (error.response && error.response.data && error.response.data.message) ||
+        error.message ||
+        error.toString();
+      return thunkAPI.rejectWithValue(message);
+    }
+  },
+);
 
 export const productGroupSlice = createSlice({
   name: 'productGroup',
@@ -110,7 +130,9 @@ export const productGroupSlice = createSlice({
       .addCase(deleteProductGroup.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
-        state.products = state.products.filter((product) => product._id !== action.payload.id);
+        state.products = state.products.filter(
+          (product) => product._id !== action.payload.id,
+        );
       })
       .addCase(deleteProductGroup.rejected, (state, action) => {
         state.isLoading = false;

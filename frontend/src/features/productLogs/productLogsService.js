@@ -15,7 +15,7 @@ const createProductLog = async (ProductLogsData, token) => {
   return response.data;
 };
 
-// Get user product
+// Get user lottery
 const getProductLogs = async (token) => {
   const config = {
     headers: {
