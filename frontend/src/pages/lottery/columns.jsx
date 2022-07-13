@@ -5,20 +5,14 @@ const statusHandler = (status) => {
   switch (status) {
     case '0':
       return (
-        <Text color="green" size="sm">
-          闲置
+        <Text color="red" size="sm">
+          禁用
         </Text>
       );
     case '1':
       return (
-        <Text color="blue" size="sm">
-          在用
-        </Text>
-      );
-    case '2':
-      return (
-        <Text color="red" size="sm">
-          缺货
+        <Text color="green" size="sm">
+          启用
         </Text>
       );
 
@@ -44,39 +38,41 @@ function tranNumber(num, point) {
   }
 }
 
-const useProductColumns = (createLog, deleteProduct) => {
+const useProductColumns = () => {
   const modals = useModals();
   const columns = [
     {
-      name: 'name',
-      header: '资产名称',
+      key: 'name',
+      dataIndex: 'name',
+      title: '奖项名称',
       sortable: false,
       defaultWidth: 100,
       defaultFlex: 1,
       userSelect: true,
-      render: ({ value, data }) => {
+      render: (_, record) => {
         return (
           <Text size="sm" color="#1c7ed6">
-            {value}
+            {record?.name}
           </Text>
         );
       },
     },
     {
-      name: 'img',
-      header: '图片',
+      key: 'img',
+      dataIndex: 'img',
+      title: '图片',
       sortable: false,
       defaultWidth: 60,
-      render: ({ value, data }) => {
+      render: (_, record) => {
         return (
           <Group position="center">
-            {value && (
+            {record?.img && (
               <Image
                 height="36px"
                 radius="md"
-                alt="preview"
+                alt=""
                 width="36px"
-                src={value}
+                src={record?.img}
                 style={{ cursor: 'pointer' }}
                 onClick={() => {
                   modals.openConfirmModal({
@@ -90,7 +86,7 @@ const useProductColumns = (createLog, deleteProduct) => {
                           radius="md"
                           alt="preview"
                           width="100%"
-                          src={value}
+                          src={record?.img}
                           style={{ cursor: 'pointer' }}
                         />
                       </Group>
@@ -108,102 +104,77 @@ const useProductColumns = (createLog, deleteProduct) => {
       },
     },
     {
-      name: 'code',
-      header: '资产编码',
+      key: 'type',
+      dataIndex: 'type',
+      title: '奖项类型',
+      defaultWidth: 100,
+      sortable: false,
+      userSelect: true,
+      render: (_, record) => {
+        let result = '';
+        switch (record.type) {
+          case '0':
+            result = '优惠券';
+            break;
+          case '1':
+            result = '奖品';
+            break;
+        }
+        return result;
+      },
+    },
+    {
+      key: 'num',
+      dataIndex: 'num',
+      title: '奖项数量',
       sortable: true,
       userSelect: true,
     },
     {
-      name: 'type',
-      header: '资产类型',
-      defaultWidth: 100,
-      sortable: false,
-      userSelect: true,
-    },
-    {
-      name: 'status',
-      header: '资产状态',
+      key: 'status',
+      dataIndex: 'status',
+      title: '状态',
       sortable: false,
       defaultWidth: 80,
-      render: ({ value, data }) => {
-        return statusHandler(value);
+      render: (_, record) => {
+        return statusHandler(record?.status);
       },
     },
     {
-      name: 'total',
-      header: '资产数量',
+      key: 'probabilityType',
+      dataIndex: 'probabilityType',
+      title: '概率方式',
       defaultWidth: 80,
       sortable: false,
+      render: (_, record) => {
+        return record?.probabilityType === '1' ? '固定概率' : '次数概率';
+      },
     },
     {
-      name: 'used',
-      header: '使用数量(借取数量)',
+      key: 'probabilityRate',
+      dataIndex: 'probabilityRate',
+      title: '概率',
       defaultWidth: 140,
       sortable: false,
-      render: ({ value, data }) => {
-        return `${value}(${data?.amountOfBorrow ? data?.amountOfBorrow : 0})`;
+      render: (_, record) => {
+        if (record?.probabilityType === '1') {
+          return record?.probabilityRate;
+        } else {
+          return `每${record?.numberOfProbability}次，中奖概率${
+            record?.probabilityRate * 100
+          }%`;
+        }
       },
     },
     {
-      name: 'left',
-      header: '剩余数量',
-      defaultWidth: 80,
-      sortable: false,
-    },
-    {
-      name: 'unit',
-      header: '单位',
-      defaultWidth: 50,
-      sortable: false,
-    },
-    {
-      name: 'price',
-      header: '单价',
-      defaultWidth: 80,
-      sortable: false,
-    },
-    {
-      name: 'totalPrice',
-      header: '总价',
-      defaultWidth: 80,
-      sortable: false,
-      render: ({ value, data }) => {
-        return <Text size="sm">{tranNumber(value, 2)}</Text>;
-      },
-    },
-    {
-      name: 'place',
-      header: '存放地点',
-      defaultWidth: 80,
-      sortable: false,
-    },
-    {
-      name: 'remark',
-      header: '备注',
-      defaultWidth: 80,
-      sortable: false,
-    },
-    {
-      name: 'updatedDate',
-      header: '更新日期',
+      key: 'updatedDate',
+      dataIndex: 'updatedDate',
+      title: '更新日期',
       sortable: false,
       defaultWidth: 160,
       userSelect: true,
-      render: ({ value, data }) => {
-        return <Text size="sm">{value}</Text>;
-      },
-    },
-    {
-      name: 'manager',
-      header: '管理人',
-      sortable: false,
-      defaultWidth: 60,
-      render: ({ value, data }) => {
-        return (
-          <Text size="sm" color="#1c7ed6">
-            {value}
-          </Text>
-        );
+      render: (_, record) => {
+        return <Text size="sm">{record?.updatedDate}</Text>;
       },
     },
   ];

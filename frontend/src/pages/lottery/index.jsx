@@ -7,15 +7,7 @@ import {
 import { createProductLogs } from '../../features/productLogs/productLogsSlice';
 import { getProductGroups } from '../../features/productGroup/productGroupSlice';
 import { useForm } from '@mantine/form';
-import {
-  Card,
-  TextInput,
-  Grid,
-  Select,
-  Button,
-  Group,
-  createStyles,
-} from '@mantine/core';
+import { Card, TextInput, Select, Button, Group, createStyles } from '@mantine/core';
 import { useMemo, useEffect } from 'react';
 import { useModals } from '@mantine/modals';
 import moment from 'moment';
@@ -23,10 +15,8 @@ import { useState, useRef } from 'react';
 import { showNotification } from '@mantine/notifications';
 import _ from 'lodash';
 import AddForm from './AddForm';
-// import ReactDataGrid from '@inovua/reactdatagrid-community';
-// import '@inovua/reactdatagrid-community/index.css';
 import { useProductColumns } from './columns';
-// import { exportExcel } from './utils';
+import { Table } from 'antd';
 
 const useStyles = createStyles((theme) => ({
   tableWrapper: {
@@ -35,9 +25,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 const statusList = [
-  { value: '0', label: '闲置' },
-  { value: '1', label: '在用' },
-  { value: '2', label: '缺货' },
+  { value: '0', label: '优惠券' },
+  { value: '1', label: '奖品' },
 ];
 
 const statusHandler = (status) => {
@@ -112,66 +101,6 @@ const Lottery = () => {
     return `${window.innerHeight - 58 - 48 - 220}px`;
   }, [window.innerHeight]);
 
-  const createLog = async (data) => {
-    if (loading) return;
-    setLoading(true);
-    console.log('data: ', data);
-    const {
-      _id,
-      name,
-      code,
-      type,
-      productType,
-      num,
-      used,
-      left,
-      user,
-      manager,
-      unit,
-      amountOfBorrow,
-      total,
-      usage,
-      remark,
-    } = data;
-    const logData = {
-      name,
-      code,
-      productType,
-      type,
-      num,
-      user,
-      manager,
-      usage,
-      remark,
-      createDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-      updatedDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-    };
-    let productData = {
-      _id,
-      used,
-      left,
-      updatedDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-    };
-    if (!_.isNaN(parseInt(amountOfBorrow))) {
-      productData.amountOfBorrow = amountOfBorrow;
-    }
-    if (!_.isNaN(parseInt(total))) {
-      productData.total = total;
-    }
-    const res = await dispatch(createProductLogs(logData));
-    const ret = await dispatch(updateLottery(productData));
-    if (!res.error && !ret.error) {
-      setLoading(false);
-      modals.closeModal('take-modal');
-      fetchData();
-      showNotification({
-        title: '操作成功：',
-        message: `${user}成功${statusHandler(type)}${num}${unit}${name}`,
-        color: 'green',
-      });
-    }
-  };
-
   const deleteProduct = async (_id) => {
     const res = await dispatch(updateLottery({ _id, _deleted: true }));
     if (!res.error) {
@@ -185,13 +114,12 @@ const Lottery = () => {
     }
   };
 
-  const columns = useProductColumns(createLog, deleteProduct);
+  const columns = useProductColumns(deleteProduct);
 
   const modals = useModals();
 
   useEffect(() => {
     fetchData();
-    fetchProductGroups();
   }, []);
 
   const fetchData = async () => {
@@ -201,24 +129,6 @@ const Lottery = () => {
     if (res) {
       setLoading(false);
       setDataJson(res.payload);
-    }
-  };
-
-  const fetchProductGroups = async () => {
-    if (loading) return;
-    setLoading(true);
-    const res = await dispatch(getProductGroups());
-    if (res) {
-      setLoading(false);
-      const data = _.chain(res.payload)
-        .map((item) => {
-          if (!item._deleted) {
-            return item;
-          }
-        })
-        .compact()
-        .value();
-      setGroups(data);
     }
   };
 
@@ -233,8 +143,8 @@ const Lottery = () => {
       modals.closeModal('add-modal');
       fetchData();
       showNotification({
-        title: '资产入库成功：',
-        message: `${data.name}已入库`,
+        title: '新增奖项成功：',
+        message: `${data.name}已新增`,
         color: 'green',
       });
     } else {
@@ -242,7 +152,7 @@ const Lottery = () => {
       modals.closeModal('add-modal');
       fetchData();
       showNotification({
-        title: '资产入库失败：',
+        title: '新增奖项失败：',
         message: res.payload.stack,
         color: 'red',
       });
@@ -256,28 +166,13 @@ const Lottery = () => {
           <form>
             <Group mb={16}>
               <TextInput
-                label="资产名称"
+                label="奖项名称"
                 placeholder="资产名称"
                 {...form.getInputProps('name')}
                 style={{ width: '250px' }}
               />
-              <TextInput
-                label="资产编码"
-                placeholder="资产编码"
-                {...form.getInputProps('code')}
-                style={{ width: '250px' }}
-              />
-              {groups && (
-                <Select
-                  label="资产类型"
-                  placeholder="请选择"
-                  data={groups}
-                  {...form.getInputProps('type')}
-                  style={{ width: '250px' }}
-                />
-              )}
               <Select
-                label="资产状态"
+                label="奖项类型"
                 placeholder="请选择"
                 data={statusList}
                 {...form.getInputProps('status')}
@@ -323,7 +218,7 @@ const Lottery = () => {
             onClick={() => {
               modals.openModal({
                 id: 'add-modal',
-                title: '资产入库',
+                title: '新增奖项',
                 children: (
                   <AddForm
                     newData={newData}
@@ -335,7 +230,7 @@ const Lottery = () => {
               });
             }}
             loading={loading}>
-            入库
+            新增
           </Button>
         </Group>
       </Card>
@@ -358,6 +253,7 @@ const Lottery = () => {
         {/*    height: tableHeight,*/}
         {/*  }}*/}
         {/*/>*/}
+        <Table columns={columns} dataSource={dataJson} />
       </Card>
     </div>
   );

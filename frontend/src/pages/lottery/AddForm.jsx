@@ -9,7 +9,8 @@ import {
   Button,
   Group,
   Text,
-  Textarea,
+  RadioGroup,
+  Radio,
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
 import { DatePicker } from '@mantine/dates';
@@ -30,30 +31,20 @@ const AddForm = (props) => {
   const form = useForm({
     initialValues: {
       name: '',
-      img: '',
       type: '',
-      code: '',
-      total: '',
-      price: '',
-      totalPrice: '',
-      unit: '',
-      manager: '',
-      createDate: '',
-      place: '',
+      num: '',
+      img: '',
+      status: '1',
+      probabilityType: '1',
+      probabilityRate: '',
+      numberOfProbability: '',
+      promotionType: '1',
+      deductionAmount: '',
+      discount: '',
       remark: '',
+      _deleted: false,
     },
   });
-
-  const calc = (num, price) => {
-    if (typeof num === 'number' && typeof price === 'number') {
-      form.setValues({
-        ...form.values,
-        total: num,
-        price: price,
-        totalPrice: num * price,
-      });
-    }
-  };
 
   const upload = (values) => {
     if (loading) return;
@@ -69,19 +60,6 @@ const AddForm = (props) => {
       })
       .then((res) => {
         if (res.data.code === 200) {
-          if (values.status === '1') {
-            const left = Number(values?.total) - Number(values?.used);
-            if (left > 0) {
-              values['left'] = left;
-            } else {
-              showNotification({
-                title: '资产入库失败：',
-                message: '使用数量不能大于资产数量',
-                color: 'red',
-              });
-              return false;
-            }
-          }
           newData({ ...values, ...{ img: res.data.url } });
           setLoading(false);
         }
@@ -104,150 +82,108 @@ const AddForm = (props) => {
           if (!_.isEmpty(file)) {
             upload(values);
           } else {
-            if (values.status === '1') {
-              const left = Number(values?.total) - Number(values?.used);
-              if (left > 0) {
-                values['left'] = left;
-              } else {
-                showNotification({
-                  title: '资产入库失败：',
-                  message: '使用数量不能大于资产数量',
-                  color: 'red',
-                });
-                return false;
-              }
-            }
             newData(values);
           }
         })}>
         <Grid>
           <Grid.Col span={12}>
             <TextInput
-              label="资产名称"
-              placeholder="资产名称"
+              label="奖项名称"
+              placeholder="奖项名称"
               {...form.getInputProps('name')}
             />
           </Grid.Col>
           <Grid.Col span={12}>
-            <Text mb={4}>产品图片</Text>
+            <Select
+              label="奖项类型"
+              placeholder="请选择"
+              data={[
+                { value: '0', label: '优惠券' },
+                { value: '1', label: '奖品' },
+              ]}
+              {...form.getInputProps('type')}
+            />
+          </Grid.Col>
+          <Grid.Col span={12}>
+            <NumberInput
+              label="奖项数量"
+              placeholder="奖项数量"
+              min={0}
+              hideControls
+              {...form.getInputProps('num')}
+            />
+          </Grid.Col>
+          <Grid.Col span={12}>
+            <Text mb={4}>奖项图片</Text>
             <FileUpload />
           </Grid.Col>
           <Grid.Col span={12}>
-            <TextInput
-              label="资产编码"
-              placeholder="资产编码"
-              {...form.getInputProps('code')}
-              disabled
-            />
+            <Text mb={4}>概率方式</Text>
+            <RadioGroup size="sm" {...form.getInputProps('probabilityType')}>
+              <Radio value="1" label="固定概率" />
+              <Radio value="2" label="次数概率" />
+            </RadioGroup>
           </Grid.Col>
           <Grid.Col span={12}>
-            <Select
-              label="资产状态"
-              placeholder="请选择"
-              data={[
-                { value: '0', label: '闲置' },
-                { value: '1', label: '在用' },
-                // { value: '2', label: '缺货' },
-              ]}
-              {...form.getInputProps('status')}
+            <NumberInput
+              label="中奖概率"
+              placeholder="0.00"
+              min={0}
+              max={1}
+              precision={4}
+              hideControls
+              {...form.getInputProps('probabilityRate')}
             />
           </Grid.Col>
-          {form.values?.status === '1' ? (
+          {form.values.probabilityType === '2' && (
             <Grid.Col span={12}>
               <NumberInput
-                label="使用数量"
-                placeholder="使用数量"
+                label="中奖概率生效次数"
+                placeholder="100"
                 min={0}
-                {...form.getInputProps('used')}
-                onChange={(value) => {
-                  form.setValues({
-                    ...form.values,
-                    used: value,
-                  });
-                }}
+                hideControls
+                {...form.getInputProps('numberOfProbability')}
               />
             </Grid.Col>
-          ) : null}
+          )}
           <Grid.Col span={12}>
-            <NumberInput
-              label="资产数量"
-              placeholder="资产数量"
-              min={0}
-              {...form.getInputProps('total')}
-              onChange={(value) => {
-                form.setValues({
-                  ...form.values,
-                  total: value,
-                });
-                calc(value, form.values.price);
-              }}
-            />
+            <Text mb={4}>优惠方式</Text>
+            <RadioGroup size="sm" {...form.getInputProps('promotionType')}>
+              <Radio value="1" label="固定扣减金额" />
+              <Radio value="2" label="固定折扣" />
+            </RadioGroup>
           </Grid.Col>
-          <Grid.Col span={12}>
-            <NumberInput
-              label="单价"
-              placeholder="单价"
-              min={0}
-              {...form.getInputProps('price')}
-              onChange={(value) => {
-                form.setValues({
-                  ...form.values,
-                  price: value,
-                });
-                calc(form.values.total, value);
-              }}
-            />
-          </Grid.Col>
-          <Grid.Col span={12}>
-            <NumberInput
-              label="总价"
-              placeholder="总价"
-              formatter={(value) =>
-                !Number.isNaN(parseFloat(value))
-                  ? `¥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-                  : '¥ '
-              }
-              {...form.getInputProps('totalPrice')}
-              disabled
-            />
-          </Grid.Col>
-          <Grid.Col span={12}>
-            <TextInput label="单位" placeholder="单位" {...form.getInputProps('unit')} />
-          </Grid.Col>
-          <Grid.Col span={12}>
-            <TextInput
-              label="管理人"
-              placeholder="管理人"
-              {...form.getInputProps('manager')}
-            />
-          </Grid.Col>
-          <Grid.Col span={12}>
-            <TextInput
-              label="库存地点"
-              placeholder="库存地点"
-              {...form.getInputProps('place')}
-            />
-          </Grid.Col>
-          <Grid.Col span={12}>
-            <Textarea label="备注" placeholder="备注" {...form.getInputProps('remark')} />
-          </Grid.Col>
-          <Grid.Col span={12}>
-            <DatePicker
-              placeholder="选择日期"
-              label="入库日期"
-              disabled
-              inputFormat="YYYY-MM-DD"
-              labelFormat="YYYY-MM-DD"
-              value={moment().toDate()}
-            />
-          </Grid.Col>
+          {form.values.promotionType === '1' ? (
+            <Grid.Col span={12}>
+              <NumberInput
+                label="扣减金额"
+                placeholder="0.00"
+                min={0}
+                precision={2}
+                hideControls
+                {...form.getInputProps('deductionAmount')}
+              />
+            </Grid.Col>
+          ) : (
+            <Grid.Col span={12}>
+              <NumberInput
+                label="固定折扣"
+                placeholder="0.00"
+                min={0}
+                max={1}
+                precision={2}
+                hideControls
+                {...form.getInputProps('discount')}
+              />
+            </Grid.Col>
+          )}
         </Grid>
         <Group mt={8} position="right">
           <Button size="xs" variant="outline" onClick={() => modals.closeAll()}>
             取消
           </Button>
           <Button type="submit" size="xs">
-            入库
+            确定
           </Button>
         </Group>
       </form>

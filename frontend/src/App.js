@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { NotificationsProvider } from '@mantine/notifications';
+import 'antd/dist/antd.css';
 
 function App() {
   return (

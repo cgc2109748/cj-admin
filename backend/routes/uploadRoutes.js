@@ -16,7 +16,10 @@ router.post('/', upload, (req, res) => {
     const file = req.file;
     const fileInfo = {};
     console.log('file: ', file);
-    fs.renameSync(`./public/uploads/${file.filename}`, `./public/uploads/${nowDate}_${file.originalname}`);
+    fs.renameSync(
+      `./public/uploads/${file.filename}`,
+      `./public/uploads/${nowDate}_${file.originalname}`,
+    );
     fileInfo.mimetype = file.mimetype;
     fileInfo.originalname = file.originalname;
     fileInfo.size = file.size;
@@ -30,8 +33,8 @@ router.post('/', upload, (req, res) => {
     console.log('fileUrl:', fileUrl);
     res.status(200).json({
       code: 200,
-      url: `https://zcgl.ibr-x.com/uploads/${nowDate}_${file.originalname}`,
-      // url: `${fileUrl}/uploads/${nowDate}_${file.originalname}`,
+      // url: `https://zcgl.ibr-x.com/uploads/${nowDate}_${file.originalname}`,
+      url: `${fileUrl}/uploads/${nowDate}_${file.originalname}`,
       message: '上传成功！',
     });
   }

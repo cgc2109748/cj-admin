@@ -24,35 +24,22 @@ const createLottery = asyncHandler(async (req, res) => {
     throw new Error('Please add a name field');
   }
 
-  const total = Number(req.body.total);
-  const used = !_.isNaN(Number(req.body.used)) ? Number(req.body.used) : 0;
-  const left = total - used;
-
-  if (left < 0) {
-    res.status(400);
-    throw new Error('使用数量不能大于资产数量');
-  }
-
   const lottery = await Lottery.create({
     name: req.body.name,
-    img: req.body.img,
-    code: req.body.code,
     type: req.body.type,
+    num: req.body.num,
+    img: req.body.img,
     status: req.body.status,
-    unit: req.body.unit,
-    total: String(total),
-    price: req.body.price,
-    totalPrice: req.body.totalPrice,
-    used: !_.isEmpty(String(used)) ? used : '0',
-    left: String(req.body.left) === 'undefined' ? left : String(req.body.left),
-    manager: req.body.manager,
-    // createDate: req.body.createDate,
-    // updatedDate: req.body.updatedDate,
+    probabilityType: req.body.probabilityType,
+    probabilityRate: req.body.probabilityRate,
+    numberOfProbability: req.body.numberOfProbability,
+    promotionType: req.body.promotionType,
+    deductionAmount: req.body.deductionAmount,
+    discount: req.body.discount,
+    remark: req.body.remark,
+    _deleted: req.body._deleted,
     createDate: moment().format('YYYY-MM-DD HH:mm:ss'),
     updatedDate: moment().format('YYYY-MM-DD HH:mm:ss'),
-    // qrCode: req.body.qrCode,
-    remark: req.body.remark,
-    place: req.body.place,
   });
 
   res.status(200).json(lottery);
