@@ -1,5 +1,6 @@
 import { Text, Grid, Button, Image, Group, Anchor } from '@mantine/core';
 import { useModals } from '@mantine/modals';
+import moment from 'moment';
 
 const statusHandler = (status) => {
   switch (status) {
@@ -44,7 +45,7 @@ const useProductColumns = () => {
     {
       key: 'name',
       dataIndex: 'name',
-      title: '奖项名称',
+      title: '活动名称',
       sortable: false,
       defaultWidth: 100,
       defaultFlex: 1,
@@ -55,6 +56,24 @@ const useProductColumns = () => {
             {record?.name}
           </Text>
         );
+      },
+    },
+    {
+      key: 'startTime',
+      dataIndex: 'startTime',
+      title: '开始时间',
+      sortable: true,
+      render: (_, record) => {
+        return record.startTime;
+      },
+    },
+    {
+      key: 'endTime',
+      dataIndex: 'startTime',
+      title: '结束时间',
+      sortable: true,
+      render: (_, record) => {
+        return record.endTime;
       },
     },
     {
@@ -167,14 +186,34 @@ const useProductColumns = () => {
       },
     },
     {
-      key: 'updatedDate',
-      dataIndex: 'updatedDate',
-      title: '更新日期',
+      key: 'income',
+      dataIndex: 'income',
+      title: '累计收益',
+      sortable: true,
+    },
+    {
+      key: 'accessCount',
+      dataIndex: 'accessCount',
+      title: '访问次数',
+      sortable: true,
+    },
+    {
+      key: 'triggerCount',
+      dataIndex: 'triggerCount',
+      title: '抽奖次数',
+      sortable: true,
+    },
+    {
+      key: 'createdAt',
+      dataIndex: 'createdAt',
+      title: '创建时间',
       sortable: false,
       defaultWidth: 160,
       userSelect: true,
       render: (_, record) => {
-        return <Text size="sm">{record?.updatedDate}</Text>;
+        return (
+          <Text size="sm">{moment(record?.createdAt).format('YYYY-MM-DD HH:mm:ss')}</Text>
+        );
       },
     },
   ];

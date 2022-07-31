@@ -13,11 +13,11 @@ import {
   Radio,
 } from '@mantine/core';
 import { showNotification } from '@mantine/notifications';
-import { DatePicker } from '@mantine/dates';
 import _ from 'lodash';
 import moment from 'moment';
 import FileUpload from '../../components/FileUpload';
 import { useModals } from '@mantine/modals';
+import { DateRangePicker } from '@mantine/dates';
 import axios from 'axios';
 
 export const FileUploadContext = createContext({});
@@ -31,6 +31,9 @@ const AddForm = (props) => {
   const form = useForm({
     initialValues: {
       name: '',
+      startTime: '',
+      endTime: '',
+      activityTime: '',
       type: '',
       num: '',
       img: '',
@@ -94,6 +97,14 @@ const AddForm = (props) => {
             />
           </Grid.Col>
           <Grid.Col span={12}>
+            <DateRangePicker
+              label="活动时间"
+              inputFormat="YYYY-MM-DD"
+              minDate={new Date()}
+              {...form.getInputProps('activityTime')}
+            />
+          </Grid.Col>
+          <Grid.Col span={12}>
             <Select
               label="奖项类型"
               placeholder="请选择"
@@ -114,7 +125,9 @@ const AddForm = (props) => {
             />
           </Grid.Col>
           <Grid.Col span={12}>
-            <Text mb={4}>奖项图片</Text>
+            <Text mb={4} size="sm" weight="bold">
+              奖项图片
+            </Text>
             <FileUpload />
           </Grid.Col>
           <Grid.Col span={12}>
@@ -147,7 +160,9 @@ const AddForm = (props) => {
             </Grid.Col>
           )}
           <Grid.Col span={12}>
-            <Text mb={4}>优惠方式</Text>
+            <Text mb={4} size="sm" weight="bold">
+              优惠方式
+            </Text>
             <RadioGroup size="sm" {...form.getInputProps('promotionType')}>
               <Radio value="1" label="固定扣减金额" />
               <Radio value="2" label="固定折扣" />

@@ -166,7 +166,7 @@ const Lottery = () => {
           <form>
             <Group mb={16}>
               <TextInput
-                label="奖项名称"
+                label="活动名称"
                 placeholder="资产名称"
                 {...form.getInputProps('name')}
                 style={{ width: '250px' }}
