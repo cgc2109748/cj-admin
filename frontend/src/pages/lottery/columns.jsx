@@ -47,13 +47,23 @@ const useProductColumns = () => {
       dataIndex: 'name',
       title: '活动名称',
       sortable: false,
-      defaultWidth: 100,
-      defaultFlex: 1,
-      userSelect: true,
       render: (_, record) => {
         return (
           <Text size="sm" color="#1c7ed6">
             {record?.name}
+          </Text>
+        );
+      },
+    },
+    {
+      key: 'url',
+      dataIndex: 'name',
+      title: '活动地址',
+      sortable: false,
+      render: (_, record) => {
+        return (
+          <Text size="sm" color="#1c7ed6">
+            {`http://43.142.90.201:8080?id=${record._id}`}
           </Text>
         );
       },
