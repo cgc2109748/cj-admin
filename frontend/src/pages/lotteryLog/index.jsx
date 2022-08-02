@@ -4,7 +4,7 @@ import {
   createLottery,
   updateLottery,
 } from '../../features/lottery/lotterySlice';
-import { createProductLogs } from '../../features/lotteryLogs/lotteryLogsSlice';
+import { getLotteryLogs } from '../../features/lotteryLogs/lotteryLogsSlice';
 import { getProductGroups } from '../../features/productGroup/productGroupSlice';
 import { useForm } from '@mantine/form';
 import { Card, TextInput, Select, Button, Group, createStyles } from '@mantine/core';
@@ -14,8 +14,7 @@ import moment from 'moment';
 import { useState, useRef } from 'react';
 import { showNotification } from '@mantine/notifications';
 import _ from 'lodash';
-import AddForm from './AddForm';
-import { useProductColumns } from './columns';
+import { useLotteryColumns } from './columns';
 import { Table } from 'antd';
 
 const useStyles = createStyles((theme) => ({
@@ -29,19 +28,7 @@ const statusList = [
   { value: '1', label: '奖品' },
 ];
 
-const statusHandler = (status) => {
-  switch (status) {
-    case '0':
-      return '领取';
-    case '1':
-      return '借取';
-
-    default:
-      return '';
-  }
-};
-
-const Lottery = () => {
+const LotteryLog = () => {
   const { classes } = useStyles();
   const gridRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -101,20 +88,7 @@ const Lottery = () => {
     return `${window.innerHeight - 58 - 48 - 220}px`;
   }, [window.innerHeight]);
 
-  const deleteProduct = async (_id) => {
-    const res = await dispatch(updateLottery({ _id, _deleted: true }));
-    if (!res.error) {
-      // console.log('res:', res);
-      showNotification({
-        title: '操作成功：',
-        message: `删除${res}`,
-        color: 'green',
-      });
-      fetchData();
-    }
-  };
-
-  const columns = useProductColumns(deleteProduct);
+  const columns = useLotteryColumns();
 
   const modals = useModals();
 
@@ -125,37 +99,10 @@ const Lottery = () => {
   const fetchData = async () => {
     if (loading) return;
     setLoading(true);
-    const res = await dispatch(getLotterys());
+    const res = await dispatch(getLotteryLogs());
     if (res) {
       setLoading(false);
       setDataJson(res.payload);
-    }
-  };
-
-  const newData = async (data) => {
-    if (loading) return;
-    setLoading(true);
-    data['createDate'] = moment().format('YYYY-MM-DD HH:mm:ss');
-    data['updatedDate'] = moment().format('YYYY-MM-DD HH:mm:ss');
-    const res = await dispatch(createLottery(data));
-    if (!res.error && !res.payload.stack) {
-      setLoading(false);
-      modals.closeModal('add-modal');
-      fetchData();
-      showNotification({
-        title: '新增奖项成功：',
-        message: `${data.name}已新增`,
-        color: 'green',
-      });
-    } else {
-      setLoading(false);
-      modals.closeModal('add-modal');
-      fetchData();
-      showNotification({
-        title: '新增奖项失败：',
-        message: res.payload.stack,
-        color: 'red',
-      });
     }
   };
 
@@ -213,50 +160,13 @@ const Lottery = () => {
             }}>
             重置
           </Button>
-          <Button
-            size="xs"
-            onClick={() => {
-              modals.openModal({
-                id: 'add-modal',
-                title: '新增奖项',
-                children: (
-                  <AddForm
-                    newData={newData}
-                    groups={groups.map((item) => {
-                      return { label: item.label, value: `${item.value}${item.code}` };
-                    })}
-                  />
-                ),
-              });
-            }}
-            loading={loading}>
-            新增
-          </Button>
         </Group>
       </Card>
       <Card shadow="sm" mt={12} p={0}>
-        {/*<ReactDataGrid*/}
-        {/*  onReady={(ref) => (gridRef.current = ref.current)}*/}
-        {/*  loading={loading}*/}
-        {/*  scrollProps={{*/}
-        {/*    autoHide: false,*/}
-        {/*  }}*/}
-        {/*  dataSource={filteredData}*/}
-        {/*  columns={columns}*/}
-        {/*  defaultSortInfo={undefined}*/}
-        {/*  showColumnMenuTool={false}*/}
-        {/*  defaultFilterValue={undefined}*/}
-        {/*  enableColumnFilterContextMenu={false}*/}
-        {/*  pagination={true}*/}
-        {/*  pageSizes={[10, 50, 100, 500, 1000]}*/}
-        {/*  style={{*/}
-        {/*    height: tableHeight,*/}
-        {/*  }}*/}
-        {/*/>*/}
         <Table columns={columns} dataSource={dataJson} />
       </Card>
     </div>
   );
 };
 
-export default Lottery;
+export default LotteryLog;

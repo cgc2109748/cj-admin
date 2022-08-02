@@ -21,6 +21,7 @@ app.use(express.urlencoded({ extended: false }));
 
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/lottery', require('./routes/lotteryRoutes'));
+app.use('/api/lotteryLogs', require('./routes/lotteryLogsRoutes'));
 app.use('/api/upload', require('./routes/uploadRoutes'));
 
 // Serve frontend

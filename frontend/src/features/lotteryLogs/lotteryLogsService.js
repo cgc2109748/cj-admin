@@ -1,22 +1,22 @@
 import axios from 'axios';
 
-const API_URL = '/api/productLogs/';
+const API_URL = '/api/lotteryLogs/';
 
 // Create new ProductLogs
-const createProductLog = async (ProductLogsData, token) => {
+const createLotteryLog = async (CreateLotteryLog, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  const response = await axios.post(`${API_URL}create`, ProductLogsData, config);
+  const response = await axios.post(`${API_URL}create`, CreateLotteryLog, config);
 
   return response.data;
 };
 
 // Get user lottery
-const getProductLogs = async (token) => {
+const getLotteryLogs = async (token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -29,22 +29,22 @@ const getProductLogs = async (token) => {
 };
 
 // Delete user ProductLogs
-const deleteProductLogs = async (ProductLogsId, token) => {
+const deleteLotteryLogs = async (LotteryLogsId, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  const response = await axios.delete(API_URL + ProductLogsId, config);
+  const response = await axios.delete(API_URL + LotteryLogsId, config);
 
   return response.data;
 };
 
-const productLogsService = {
-  createProductLog,
-  getProductLogs,
-  deleteProductLogs,
+const lotteryLogsService = {
+  createLotteryLog,
+  getLotteryLogs,
+  deleteLotteryLogs,
 };
 
-export default productLogsService;
+export default lotteryLogsService;

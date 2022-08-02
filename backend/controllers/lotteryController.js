@@ -196,7 +196,8 @@ const lottery = asyncHandler(async (req, res) => {
         );
         await Log.create({
           orderId: '1234567890',
-          purchases: 10,
+          activityId: id,
+          purchases: times,
           result: JSON.stringify(result),
         });
         return res.status(200).json({ result });

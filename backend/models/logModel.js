@@ -11,6 +11,11 @@ const logSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    activityId: {
+      //活动ID
+      type: String,
+      required: true,
+    },
     purchases: {
       //购买次数
       type: String,

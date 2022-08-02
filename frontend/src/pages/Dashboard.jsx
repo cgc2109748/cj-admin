@@ -5,13 +5,13 @@ import { createStyles, Navbar, Group, Code, Box, Avatar, Header } from '@mantine
 import { Home as HomeIcon, Table as TableIcon, Logout } from 'tabler-icons-react';
 import Home from './home/Home';
 import Lottery from './lottery';
-// import ProductLogs from './productLogs';
+import LotteryLog from './lotteryLog';
 // import ProductGroups from './productGroups';
 
 const data = [
   { page: 'home', label: '首页', icon: HomeIcon, active: true },
   { page: 'lottery', label: '抽奖设置', icon: TableIcon },
-  // { page: 'productLogs', label: '资产使用台账', icon: TableIcon },
+  { page: 'lotteryLogs', label: '日志', icon: TableIcon },
   // { page: 'productsGroups', label: '资产类型', icon: TableIcon },
 ];
 
@@ -87,7 +87,7 @@ const Dashboard = () => {
         {/* {indexPage} */}
         {nav === 'home' ? <Home /> : null}
         {nav === 'lottery' ? <Lottery /> : null}
-        {/*{nav === 'productLogs' ? <ProductLogs /> : null}*/}
+        {nav === 'lotteryLogs' ? <LotteryLog /> : null}
         {/*{nav === 'productsGroups' ? <ProductGroups /> : null}*/}
       </Box>
     </Box>

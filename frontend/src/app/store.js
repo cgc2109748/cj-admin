@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import authReducer from '../features/auth/authSlice';
 import productReducer from '../features/lottery/lotterySlice';
-import productLogsReducer from '../features/productLogs/productLogsSlice';
+import productLogsReducer from '../features/lotteryLogs/lotteryLogsSlice';
 import productGroupReducer from '../features/productGroup/productGroupSlice';
 
 export const store = configureStore({
