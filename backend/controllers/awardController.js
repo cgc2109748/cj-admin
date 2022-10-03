@@ -64,7 +64,6 @@ const updateAward = asyncHandler(async (req, res) => {
       new: true,
     },
   );
-  console.log('-> updatedAward', updatedAward);
   res.status(200).json(updatedAward);
 });
 
@@ -72,6 +71,7 @@ const updateAward = asyncHandler(async (req, res) => {
 // @route   DELETE /api/awards/:id
 // @access  Private
 const deleteAward = asyncHandler(async (req, res) => {
+  const { id } = req.params.id;
   const Award = await awardModel.findById(req.params.id);
 
   if (!Award) {
@@ -93,7 +93,7 @@ const deleteAward = asyncHandler(async (req, res) => {
 
   await Award.remove();
 
-  res.status(200).json({ id: req.params.id });
+  res.status(200).json({ id });
 });
 
 module.exports = {

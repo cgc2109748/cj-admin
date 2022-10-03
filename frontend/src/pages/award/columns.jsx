@@ -137,7 +137,26 @@ const useProductColumns = (props) => {
               }}>
               <FiEdit />
             </ActionIcon>
-            <ActionIcon color="red">
+            <ActionIcon
+              color="red"
+              onClick={() => {
+                modals.openConfirmModal({
+                  id: 'delete-modal',
+                  title: '删除奖项',
+                  children: <Text>确定删除该奖项吗？</Text>,
+                  labels: {
+                    confirm: '确认删除',
+                    cancel: '取消',
+                  },
+                  onConfirm: () => {
+                    modals.closeModal('delete-modal');
+                    props.doDelete(record._id);
+                  },
+                  onCancel: () => {
+                    modals.closeModal('delete-modal');
+                  },
+                });
+              }}>
               <FiTrash2 />
             </ActionIcon>
           </Group>

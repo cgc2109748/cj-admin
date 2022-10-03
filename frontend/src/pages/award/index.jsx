@@ -1,5 +1,10 @@
 import { useDispatch } from 'react-redux';
-import { getAwards, createAward, updateAward } from '../../features/award/awardSlice';
+import {
+  getAwards,
+  createAward,
+  updateAward,
+  deleteAward,
+} from '../../features/award/awardSlice';
 import { useForm } from '@mantine/form';
 import { Card, TextInput, Select, Button, Group, createStyles } from '@mantine/core';
 import { useMemo, useEffect, createContext } from 'react';
@@ -73,10 +78,9 @@ const Award = () => {
     return `${window.innerHeight - 58 - 48 - 220}px`;
   }, [window.innerHeight]);
 
-  const deleteProduct = async (_id) => {
-    const res = await dispatch(updateAward({ _id, _deleted: true }));
+  const doDelete = async (id) => {
+    const res = await dispatch(deleteAward({ id }));
     if (!res.error) {
-      // console.log('res:', res);
       showNotification({
         title: '操作成功：',
         message: `删除${res}`,
@@ -112,7 +116,7 @@ const Award = () => {
     }
   };
 
-  const columns = useProductColumns({ deleteProduct, edit });
+  const columns = useProductColumns({ doDelete, edit });
 
   const modals = useModals();
 

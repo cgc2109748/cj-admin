@@ -43,14 +43,15 @@ const updateAward = async (AwardData, token) => {
 };
 
 // Delete Award
-const deleteAward = async (AwardId, token) => {
+const deleteAward = async (AwardData, token) => {
+  const { id } = AwardData;
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  const response = await axios.delete(API_URL + AwardId, config);
+  const response = await axios.delete(API_URL + id, config);
 
   return response.data;
 };
