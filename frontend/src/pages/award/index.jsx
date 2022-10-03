@@ -83,7 +83,7 @@ const Award = () => {
     if (!res.error) {
       showNotification({
         title: '操作成功：',
-        message: `删除${res}`,
+        message: `删除成功`,
         color: 'green',
       });
       fetchData();
