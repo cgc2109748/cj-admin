@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { createStyles, Navbar, Group, Code, Box, Avatar, Header } from '@mantine/core';
@@ -6,14 +6,16 @@ import { Home as HomeIcon, Table as TableIcon, Logout } from 'tabler-icons-react
 import Home from './home/Home';
 import Lottery from './lottery';
 import LotteryLog from './lotteryLog';
-// import ProductGroups from './productGroups';
+import Award from './award';
 
 const data = [
   { page: 'home', label: '首页', icon: HomeIcon, active: true },
+  { page: 'award', label: '奖品设置', icon: TableIcon },
   { page: 'lottery', label: '抽奖设置', icon: TableIcon },
   { page: 'lotteryLogs', label: '日志', icon: TableIcon },
   // { page: 'productsGroups', label: '资产类型', icon: TableIcon },
 ];
+export const FileUploadContext = createContext({});
 
 const Dashboard = () => {
   const { classes, cx } = useStyles();
@@ -53,44 +55,53 @@ const Dashboard = () => {
     // navigate('/login');
     window.location = '/';
   };
+  const [file, setFile] = useState(null);
+
+  const value = {
+    file,
+    setFile,
+  };
 
   return (
-    <Box sx={{ display: 'flex' }}>
-      <Navbar height={window.innerHeight} width={{ sm: 270 }} p="md">
-        <Navbar.Section grow>
-          <Group className={classes.header} position="apart">
-            CJ管理系统
-            <Code sx={{ fontWeight: 700 }}>v1.0.0</Code>
-          </Group>
-          {links}
-        </Navbar.Section>
+    <FileUploadContext.Provider value={value}>
+      <Box sx={{ display: 'flex' }}>
+        <Navbar height={window.innerHeight} width={{ sm: 270 }} p="md">
+          <Navbar.Section grow>
+            <Group className={classes.header} position="apart">
+              CJ管理系统
+              <Code sx={{ fontWeight: 700 }}>v1.0.0</Code>
+            </Group>
+            {links}
+          </Navbar.Section>
 
-        <Navbar.Section className={classes.footer}>
-          <a className={classes.link} onClick={logout}>
-            <Logout className={classes.linkIcon} />
-            <span>登出</span>
-          </a>
-        </Navbar.Section>
-      </Navbar>
+          <Navbar.Section className={classes.footer}>
+            <a className={classes.link} onClick={logout}>
+              <Logout className={classes.linkIcon} />
+              <span>登出</span>
+            </a>
+          </Navbar.Section>
+        </Navbar>
 
-      <Box sx={{ width: '100%' }}>
-        <Header
-          height="58px"
-          sx={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            paddingRight: '16px',
-          }}>
-          <Avatar src="https://avatars.githubusercontent.com/u/10353856?s=460&u=88394dfd67727327c1f7670a1764dc38a8a24831&v=4" />
-        </Header>
-        {/* {indexPage} */}
-        {nav === 'home' ? <Home /> : null}
-        {nav === 'lottery' ? <Lottery /> : null}
-        {nav === 'lotteryLogs' ? <LotteryLog /> : null}
-        {/*{nav === 'productsGroups' ? <ProductGroups /> : null}*/}
+        <Box sx={{ width: '100%' }}>
+          <Header
+            height="58px"
+            sx={{
+              display: 'flex',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              paddingRight: '16px',
+            }}>
+            <Avatar src="https://avatars.githubusercontent.com/u/10353856?s=460&u=88394dfd67727327c1f7670a1764dc38a8a24831&v=4" />
+          </Header>
+          {/* {indexPage} */}
+          {nav === 'home' ? <Home /> : null}
+          {nav === 'award' ? <Award /> : null}
+          {nav === 'lottery' ? <Lottery /> : null}
+          {nav === 'lotteryLogs' ? <LotteryLog /> : null}
+          {/*{nav === 'productsGroups' ? <ProductGroups /> : null}*/}
+        </Box>
       </Box>
-    </Box>
+    </FileUploadContext.Provider>
   );
 };
 

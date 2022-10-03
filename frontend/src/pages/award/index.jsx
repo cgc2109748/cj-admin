@@ -1,14 +1,8 @@
 import { useDispatch } from 'react-redux';
-import {
-  getLotterys,
-  createLottery,
-  updateLottery,
-} from '../../features/lottery/lotterySlice';
-import { createProductLogs } from '../../features/lotteryLogs/lotteryLogsSlice';
-import { getProductGroups } from '../../features/productGroup/productGroupSlice';
+import { getAwards, createAward, updateAward } from '../../features/award/awardSlice';
 import { useForm } from '@mantine/form';
 import { Card, TextInput, Select, Button, Group, createStyles } from '@mantine/core';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, createContext } from 'react';
 import { useModals } from '@mantine/modals';
 import moment from 'moment';
 import { useState, useRef } from 'react';
@@ -29,19 +23,7 @@ const statusList = [
   { value: '1', label: '奖品' },
 ];
 
-const statusHandler = (status) => {
-  switch (status) {
-    case '0':
-      return '领取';
-    case '1':
-      return '借取';
-
-    default:
-      return '';
-  }
-};
-
-const Lottery = () => {
+const Award = () => {
   const { classes } = useStyles();
   const gridRef = useRef(null);
   const [loading, setLoading] = useState(false);
@@ -49,19 +31,9 @@ const Lottery = () => {
   const form = useForm({
     initialValues: {
       name: '',
-      code: '',
-      type: '',
-      status: '',
-      total: '',
-      used: '',
-      left: '',
-      unit: '',
-      price: '',
-      totalPrice: '',
-      createDate: '',
-      updatedDate: '',
-      manager: '',
-      qrCode: '',
+      img: '',
+      amount: '',
+      _delete: false,
     },
   });
   const [filterValue, setFilterValue] = useState({
@@ -102,7 +74,7 @@ const Lottery = () => {
   }, [window.innerHeight]);
 
   const deleteProduct = async (_id) => {
-    const res = await dispatch(updateLottery({ _id, _deleted: true }));
+    const res = await dispatch(updateAward({ _id, _deleted: true }));
     if (!res.error) {
       // console.log('res:', res);
       showNotification({
@@ -114,7 +86,33 @@ const Lottery = () => {
     }
   };
 
-  const columns = useProductColumns(deleteProduct);
+  const edit = async (data) => {
+    if (loading) return;
+    setLoading(true);
+    data['updatedDate'] = moment().format('YYYY-MM-DD HH:mm:ss');
+    const res = await dispatch(updateAward(data));
+    if (!res.error && !res.payload.stack) {
+      setLoading(false);
+      modals.closeModal('add-modal');
+      fetchData();
+      showNotification({
+        title: '编辑奖项成功：',
+        message: `${data.name}编辑成功`,
+        color: 'green',
+      });
+    } else {
+      setLoading(false);
+      modals.closeModal('add-modal');
+      fetchData();
+      showNotification({
+        title: '编辑奖项失败：',
+        message: res.payload.stack,
+        color: 'red',
+      });
+    }
+  };
+
+  const columns = useProductColumns({ deleteProduct, edit });
 
   const modals = useModals();
 
@@ -125,7 +123,7 @@ const Lottery = () => {
   const fetchData = async () => {
     if (loading) return;
     setLoading(true);
-    const res = await dispatch(getLotterys());
+    const res = await dispatch(getAwards());
     if (res) {
       setLoading(false);
       setDataJson(res.payload);
@@ -137,7 +135,7 @@ const Lottery = () => {
     setLoading(true);
     data['createDate'] = moment().format('YYYY-MM-DD HH:mm:ss');
     data['updatedDate'] = moment().format('YYYY-MM-DD HH:mm:ss');
-    const res = await dispatch(createLottery(data));
+    const res = await dispatch(createAward(data));
     if (!res.error && !res.payload.stack) {
       setLoading(false);
       modals.closeModal('add-modal');
@@ -166,18 +164,18 @@ const Lottery = () => {
           <form>
             <Group mb={16}>
               <TextInput
-                label="活动名称"
-                placeholder="资产名称"
+                label="奖品名称"
+                placeholder="奖品名称"
                 {...form.getInputProps('name')}
                 style={{ width: '250px' }}
               />
-              <Select
-                label="奖项类型"
-                placeholder="请选择"
-                data={statusList}
-                {...form.getInputProps('status')}
-                style={{ width: '250px' }}
-              />
+              {/*<Select*/}
+              {/*  label="奖项类型"*/}
+              {/*  placeholder="请选择"*/}
+              {/*  data={statusList}*/}
+              {/*  {...form.getInputProps('status')}*/}
+              {/*  style={{ width: '250px' }}*/}
+              {/*/>*/}
             </Group>
           </form>
         </Group>
@@ -219,15 +217,7 @@ const Lottery = () => {
               modals.openModal({
                 id: 'add-modal',
                 title: '新增奖项',
-                size: 1000,
-                children: (
-                  <AddForm
-                    newData={newData}
-                    groups={groups.map((item) => {
-                      return { label: item.label, value: `${item.value}${item.code}` };
-                    })}
-                  />
-                ),
+                children: <AddForm action={newData} />,
               });
             }}
             loading={loading}>
@@ -236,28 +226,10 @@ const Lottery = () => {
         </Group>
       </Card>
       <Card shadow="sm" mt={12} p={0}>
-        {/*<ReactDataGrid*/}
-        {/*  onReady={(ref) => (gridRef.current = ref.current)}*/}
-        {/*  loading={loading}*/}
-        {/*  scrollProps={{*/}
-        {/*    autoHide: false,*/}
-        {/*  }}*/}
-        {/*  dataSource={filteredData}*/}
-        {/*  columns={columns}*/}
-        {/*  defaultSortInfo={undefined}*/}
-        {/*  showColumnMenuTool={false}*/}
-        {/*  defaultFilterValue={undefined}*/}
-        {/*  enableColumnFilterContextMenu={false}*/}
-        {/*  pagination={true}*/}
-        {/*  pageSizes={[10, 50, 100, 500, 1000]}*/}
-        {/*  style={{*/}
-        {/*    height: tableHeight,*/}
-        {/*  }}*/}
-        {/*/>*/}
         <Table columns={columns} dataSource={dataJson} />
       </Card>
     </div>
   );
 };
 
-export default Lottery;
+export default Award;

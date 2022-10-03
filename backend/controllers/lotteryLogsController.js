@@ -24,7 +24,7 @@ const setLotteryLog = asyncHandler(async (req, res) => {
     throw new Error('Please add a name field');
   }
 
-  const lotteryLog = await logModel.create({
+  const LotteryLog = await logModel.create({
     name: req.body.name,
     code: req.body.code,
     productType: req.body.productType,
@@ -40,16 +40,16 @@ const setLotteryLog = asyncHandler(async (req, res) => {
     remark: req.body.remark,
   });
 
-  res.status(200).json(lotteryLog);
+  res.status(200).json(LotteryLog);
 });
 
 // @desc    Update logModel
 // @route   PUT /api/lotteryLogs/:id
 // @access  Private
 const updateLotteryLog = asyncHandler(async (req, res) => {
-  const lotteryLog = await logModel.findById(req.params.id);
+  const LotteryLog = await logModel.findById(req.params.id);
 
-  if (!lotteryLog) {
+  if (!LotteryLog) {
     res.status(400);
     throw new Error('logModel not found');
   }
@@ -77,9 +77,9 @@ const updateLotteryLog = asyncHandler(async (req, res) => {
 // @route   DELETE /api/lotteryLogs/:id
 // @access  Private
 const deleteLotteryLog = asyncHandler(async (req, res) => {
-  const lotteryLog = await logModel.findById(req.params.id);
+  const LotteryLog = await logModel.findById(req.params.id);
 
-  if (!lotteryLog) {
+  if (!LotteryLog) {
     res.status(400);
     throw new Error('logModel not found');
   }
@@ -96,7 +96,7 @@ const deleteLotteryLog = asyncHandler(async (req, res) => {
   //   throw new Error('User not authorized');
   // }
 
-  await Product.remove();
+  await LotteryLog.remove();
 
   res.status(200).json({ id: req.params.id });
 });

@@ -42,15 +42,41 @@ const lotterySchema = mongoose.Schema(
       type: String,
       required: [true, 'Please add a status value'],
     },
-    probabilityType: {
+    lottery1: {
+      //奖品一
+      type: String,
+    },
+    probabilityType1: {
       //概率方式
       type: String,
-      required: [true, 'Please add a probabilityType value'],
     },
-    probabilityRate: {
+    probabilityRate1: {
       //中奖概率
       type: Number,
-      required: [true, 'Please add a probabilityRate value'],
+    },
+    lottery2: {
+      //奖品二
+      type: String,
+    },
+    probabilityType2: {
+      //概率方式
+      type: String,
+    },
+    probabilityRate2: {
+      //中奖概率
+      type: Number,
+    },
+    lottery3: {
+      //奖品三
+      type: String,
+    },
+    probabilityType3: {
+      //概率方式
+      type: String,
+    },
+    probabilityRate3: {
+      //中奖概率
+      type: Number,
     },
     numberOfProbability: {
       //中奖概率生效次数

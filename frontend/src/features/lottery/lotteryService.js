@@ -3,28 +3,28 @@ import axios from 'axios';
 const API_URL = '/api/lottery/';
 
 // Create new Lottery
-const createLottery = async (ProductData, token) => {
+const createLottery = async (LotteryData, token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  const response = await axios.post(`${API_URL}create`, ProductData, config);
+  const response = await axios.post(`${API_URL}create`, LotteryData, config);
 
   return response.data;
 };
 
 // Update user Lottery
-const updateLottery = async (ProductData, token) => {
-  const { _id } = ProductData;
+const updateLottery = async (LotteryData, token) => {
+  const { _id } = LotteryData;
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  const response = await axios.put(API_URL + _id, ProductData, config);
+  const response = await axios.put(API_URL + _id, LotteryData, config);
 
   return response.data;
 };
@@ -56,14 +56,14 @@ const deleteLottery = async (ProductId, token) => {
 };
 
 // queryProductByType
-// const queryProductByType = async (ProductData, token) => {
+// const queryProductByType = async (LotteryData, token) => {
 //   const config = {
 //     headers: {
 //       Authorization: `Bearer ${token}`,
 //     },
 //   };
 //
-//   const response = await axios.post(`${API_URL}queryProductByType`, ProductData, config);
+//   const response = await axios.post(`${API_URL}queryProductByType`, LotteryData, config);
 //   return response.data;
 // };
 
