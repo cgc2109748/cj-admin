@@ -43,14 +43,15 @@ const getLotterys = async (token) => {
 };
 
 // Delete user Lottery
-const deleteLottery = async (ProductId, token) => {
+const deleteLottery = async (LotteryData, token) => {
+  const { _id } = LotteryData;
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   };
 
-  const response = await axios.delete(API_URL + ProductId, config);
+  const response = await axios.delete(API_URL + _id, config);
 
   return response.data;
 };

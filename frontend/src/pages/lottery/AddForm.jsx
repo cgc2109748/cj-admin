@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import { useState, createContext, useMemo } from 'react';
+import { useState, createContext, useMemo, useEffect } from 'react';
 import { useForm } from '@mantine/form';
 import {
   TextInput,
@@ -19,29 +19,45 @@ import FileUpload from '../../components/FileUpload';
 import { useModals } from '@mantine/modals';
 import { DateRangePicker } from '@mantine/dates';
 import axios from 'axios';
+import { getAwards } from '../../features/award/awardSlice';
 
 export const FileUploadContext = createContext({});
 
 const lotteryLevel = ['一等奖', '二等奖', '三等奖', '四等奖', '五等奖'];
 
-const AddForm = (props) => {
+export const AddForm = (props) => {
   const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const modals = useModals();
-  const { groups, newData } = props;
+  const { groups, action, data } = props;
   const [file, setFile] = useState(null);
+  const [awards, setAwards] = useState([]);
+
+  useEffect(() => {
+    if (!_.isEmpty(data)) {
+      form.setValues(data);
+      console.log('-> data', data);
+    }
+  }, [data]);
+
   const form = useForm({
     initialValues: {
       name: '',
       startTime: '',
       endTime: '',
       activityTime: '',
-      type: '',
-      num: '',
+      num: 3,
       img: '',
       status: '1',
-      probabilityType: '1',
-      probabilityRate: '',
+      lottery1: '',
+      probabilityType1: '1',
+      probabilityRate1: '',
+      lottery2: '',
+      probabilityType2: '1',
+      probabilityRate2: '',
+      lottery13: '',
+      probabilityType3: '1',
+      probabilityRate3: '',
       numberOfProbability: '',
       promotionType: '1',
       deductionAmount: '',
@@ -52,12 +68,31 @@ const AddForm = (props) => {
     },
   });
 
+  useEffect(() => {
+    fetchAwards();
+  }, []);
+
+  const fetchAwards = async () => {
+    if (loading) return;
+    setLoading(true);
+    const res = await dispatch(getAwards());
+    if (res) {
+      setLoading(false);
+      const result = _.map(res.payload, (item) => {
+        return {
+          value: item._id,
+          label: item.name,
+        };
+      });
+      setAwards(result);
+    }
+  };
+
   const upload = (values) => {
     if (loading) return;
     setLoading(true);
     const formData = new FormData();
     formData.append('file', file);
-    console.log('file: ', file);
     axios
       .post('/api/upload', formData, {
         header: {
@@ -66,7 +101,7 @@ const AddForm = (props) => {
       })
       .then((res) => {
         if (res.data.code === 200) {
-          newData({ ...values, ...{ img: res.data.url } });
+          action({ ...values, ...{ img: res.data.url } });
           setLoading(false);
         }
       })
@@ -99,7 +134,7 @@ const AddForm = (props) => {
           if (!_.isEmpty(file)) {
             upload(values);
           } else {
-            newData(values);
+            action(values);
           }
         })}>
         <Grid>
@@ -131,11 +166,11 @@ const AddForm = (props) => {
           {/*</Grid.Col>*/}
           <Grid.Col span={6}>
             <NumberInput
+              defaultValue={3}
               label="奖项数量"
               placeholder="奖项数量，最大数量为3"
               min={1}
               max={3}
-              hideControls
               {...form.getInputProps('num')}
             />
           </Grid.Col>
@@ -154,10 +189,11 @@ const AddForm = (props) => {
                       <Select
                         label={`${lotteryLevel[index]}奖品`}
                         placeholder="请选择"
-                        data={[
-                          { value: '0', label: '优惠券' },
-                          { value: '1', label: '奖品' },
-                        ]}
+                        // data={[
+                        //   { value: '0', label: '优惠券' },
+                        //   { value: '1', label: '奖品' },
+                        // ]}
+                        data={awards}
                         {...form.getInputProps(`lottery${index + 1}`)}
                       />
                     </Grid.Col>

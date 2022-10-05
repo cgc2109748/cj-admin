@@ -3,6 +3,7 @@ import {
   getLotterys,
   createLottery,
   updateLottery,
+  deleteLottery,
 } from '../../features/lottery/lotterySlice';
 import { createProductLogs } from '../../features/lotteryLogs/lotteryLogsSlice';
 import { getProductGroups } from '../../features/productGroup/productGroupSlice';
@@ -15,7 +16,7 @@ import { useState, useRef } from 'react';
 import { showNotification } from '@mantine/notifications';
 import _ from 'lodash';
 import AddForm from './AddForm';
-import { useProductColumns } from './columns';
+import { useLotteryColumns } from './columns';
 import { Table } from 'antd';
 
 const useStyles = createStyles((theme) => ({
@@ -97,12 +98,34 @@ const Lottery = () => {
     // return dataJson;
   }, [dataJson, filterValue]);
 
-  const tableHeight = useMemo(() => {
-    return `${window.innerHeight - 58 - 48 - 220}px`;
-  }, [window.innerHeight]);
+  const edit = async (data) => {
+    if (loading) return;
+    setLoading(true);
+    data['updatedDate'] = moment().format('YYYY-MM-DD HH:mm:ss');
+    const res = await dispatch(updateLottery(data));
+    if (!res.error && !res.payload.stack) {
+      setLoading(false);
+      modals.closeModal('add-modal');
+      fetchData();
+      showNotification({
+        title: '编辑活动成功：',
+        message: `${data.name}编辑成功`,
+        color: 'green',
+      });
+    } else {
+      setLoading(false);
+      modals.closeModal('add-modal');
+      fetchData();
+      showNotification({
+        title: '编辑活动失败：',
+        message: res.payload.stack,
+        color: 'red',
+      });
+    }
+  };
 
-  const deleteProduct = async (_id) => {
-    const res = await dispatch(updateLottery({ _id, _deleted: true }));
+  const doDelete = async (_id) => {
+    const res = await dispatch(deleteLottery({ _id, _deleted: true }));
     if (!res.error) {
       // console.log('res:', res);
       showNotification({
@@ -114,7 +137,7 @@ const Lottery = () => {
     }
   };
 
-  const columns = useProductColumns(deleteProduct);
+  const columns = useLotteryColumns({ edit, doDelete });
 
   const modals = useModals();
 
@@ -222,7 +245,7 @@ const Lottery = () => {
                 size: 1000,
                 children: (
                   <AddForm
-                    newData={newData}
+                    action={newData}
                     groups={groups.map((item) => {
                       return { label: item.label, value: `${item.value}${item.code}` };
                     })}

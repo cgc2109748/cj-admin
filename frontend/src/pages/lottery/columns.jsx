@@ -1,6 +1,9 @@
-import { Text, Grid, Button, Image, Group, Anchor } from '@mantine/core';
+import { Text, Grid, Button, Image, Group, Tooltip, ActionIcon } from '@mantine/core';
 import { useModals } from '@mantine/modals';
 import moment from 'moment';
+import AddForm from './AddForm';
+import { FiEdit, FiTrash2 } from 'react-icons/fi';
+import _ from 'lodash';
 
 const statusHandler = (status) => {
   switch (status) {
@@ -21,7 +24,7 @@ const statusHandler = (status) => {
   }
 };
 
-const useProductColumns = () => {
+const useLotteryColumns = (props) => {
   const modals = useModals();
   const columns = [
     {
@@ -31,9 +34,11 @@ const useProductColumns = () => {
       sortable: false,
       render: (_, record) => {
         return (
-          <Text size="sm" color="#1c7ed6">
-            {record?.name}
-          </Text>
+          <Tooltip label={record?.name} withArrow>
+            <Text lineClamp={1} size="sm" color="#1c7ed6" style={{ width: '64px' }}>
+              {record?.name}
+            </Text>
+          </Tooltip>
         );
       },
     },
@@ -44,9 +49,12 @@ const useProductColumns = () => {
       sortable: false,
       render: (_, record) => {
         return (
-          <Text size="sm" color="#1c7ed6">
-            {`http://43.142.90.201:8080?id=${record._id}`}
-          </Text>
+          <Tooltip label={`http://localhost:8080?id=${record._id}`} withArrow>
+            <Text size="sm" color="#1c7ed6">
+              {`http://localhost:8080?id=${record._id}`}
+              {/*{`http://43.142.90.201:8080?id=${record._id}`}*/}
+            </Text>
+          </Tooltip>
         );
       },
     },
@@ -54,6 +62,7 @@ const useProductColumns = () => {
       key: 'startTime',
       dataIndex: 'startTime',
       title: '开始时间',
+      width: 120,
       sortable: true,
       render: (_, record) => {
         return record.startTime;
@@ -63,6 +72,7 @@ const useProductColumns = () => {
       key: 'endTime',
       dataIndex: 'startTime',
       title: '结束时间',
+      width: 120,
       sortable: true,
       render: (_, record) => {
         return record.endTime;
@@ -73,7 +83,7 @@ const useProductColumns = () => {
       dataIndex: 'img',
       title: '图片',
       sortable: false,
-      defaultWidth: 60,
+      width: 80,
       render: (_, record) => {
         return (
           <Group position="center">
@@ -114,26 +124,26 @@ const useProductColumns = () => {
         );
       },
     },
-    {
-      key: 'type',
-      dataIndex: 'type',
-      title: '奖项类型',
-      defaultWidth: 100,
-      sortable: false,
-      userSelect: true,
-      render: (_, record) => {
-        let result = '';
-        switch (record.type) {
-          case '0':
-            result = '优惠券';
-            break;
-          case '1':
-            result = '奖品';
-            break;
-        }
-        return result;
-      },
-    },
+    // {
+    //   key: 'type',
+    //   dataIndex: 'type',
+    //   title: '奖项类型',
+    //   width: 100,
+    //   sortable: false,
+    //   userSelect: true,
+    //   render: (_, record) => {
+    //     let result = '';
+    //     switch (record.type) {
+    //       case '0':
+    //         result = '优惠券';
+    //         break;
+    //       case '1':
+    //         result = '奖品';
+    //         break;
+    //     }
+    //     return result;
+    //   },
+    // },
     {
       key: 'num',
       dataIndex: 'num',
@@ -146,37 +156,40 @@ const useProductColumns = () => {
       dataIndex: 'status',
       title: '状态',
       sortable: false,
-      defaultWidth: 80,
       render: (_, record) => {
-        return statusHandler(record?.status);
+        return <Text style={{ width: '30px' }}>{statusHandler(record?.status)}</Text>;
       },
     },
-    {
-      key: 'probabilityType',
-      dataIndex: 'probabilityType',
-      title: '概率方式',
-      defaultWidth: 80,
-      sortable: false,
-      render: (_, record) => {
-        return record?.probabilityType === '1' ? '固定概率' : '次数概率';
-      },
-    },
-    {
-      key: 'probabilityRate',
-      dataIndex: 'probabilityRate',
-      title: '概率',
-      defaultWidth: 140,
-      sortable: false,
-      render: (_, record) => {
-        if (record?.probabilityType === '1') {
-          return record?.probabilityRate;
-        } else {
-          return `每${record?.numberOfProbability}次，中奖概率${
-            record?.probabilityRate * 100
-          }%`;
-        }
-      },
-    },
+    // {
+    //   key: 'probabilityType',
+    //   dataIndex: 'probabilityType',
+    //   title: '概率方式',
+    //   width: 80,
+    //   sortable: false,
+    //   render: (_, record) => {
+    //     return (
+    //       <Text size="sm" style={{ width: '64px' }}>
+    //         {record?.probabilityType === '1' ? '固定概率' : '次数概率'}
+    //       </Text>
+    //     );
+    //   },
+    // },
+    // {
+    //   key: 'probabilityRate',
+    //   dataIndex: 'probabilityRate',
+    //   title: '概率',
+    //   width: 140,
+    //   sortable: false,
+    //   render: (_, record) => {
+    //     if (record?.probabilityType === '1') {
+    //       return record?.probabilityRate;
+    //     } else {
+    //       return `每${record?.numberOfProbability}次，中奖概率${
+    //         record?.probabilityRate * 100
+    //       }%`;
+    //     }
+    //   },
+    // },
     {
       key: 'income',
       dataIndex: 'income',
@@ -200,7 +213,7 @@ const useProductColumns = () => {
       dataIndex: 'createdAt',
       title: '创建时间',
       sortable: false,
-      defaultWidth: 160,
+      width: 120,
       userSelect: true,
       render: (_, record) => {
         return (
@@ -208,8 +221,62 @@ const useProductColumns = () => {
         );
       },
     },
+    {
+      key: '_id',
+      dataIndex: '_id',
+      title: '操作',
+      sortable: false,
+      render: (value, record) => {
+        let newRecord = _.cloneDeep(record);
+        let newActivityTime = [];
+        if (!_.isEmpty(record['activityTime'])) {
+          _.forEach(record['activityTime'], (val, key) => {
+            newActivityTime.push(new Date(val));
+          });
+        }
+        newRecord['activityTime'] = newActivityTime;
+        return (
+          <Group style={{ width: '72px' }}>
+            <ActionIcon
+              color="blue"
+              onClick={() => {
+                modals.openModal({
+                  id: 'edit-modal',
+                  title: '编辑活动',
+                  size: 1000,
+                  children: <AddForm action={props.edit} data={newRecord} />,
+                });
+              }}>
+              <FiEdit />
+            </ActionIcon>
+            <ActionIcon
+              color="red"
+              onClick={() => {
+                modals.openConfirmModal({
+                  id: 'delete-modal',
+                  title: '删除活动',
+                  children: <Text>确定删除该活动吗？</Text>,
+                  labels: {
+                    confirm: '确认删除',
+                    cancel: '取消',
+                  },
+                  onConfirm: () => {
+                    modals.closeModal('delete-modal');
+                    props.doDelete(record._id);
+                  },
+                  onCancel: () => {
+                    modals.closeModal('delete-modal');
+                  },
+                });
+              }}>
+              <FiTrash2 />
+            </ActionIcon>
+          </Group>
+        );
+      },
+    },
   ];
   return columns;
 };
 
-export { statusHandler, useProductColumns };
+export { statusHandler, useLotteryColumns };

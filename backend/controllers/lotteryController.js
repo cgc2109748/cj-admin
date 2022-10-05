@@ -29,15 +29,22 @@ const createLottery = asyncHandler(async (req, res) => {
 
   const lottery = await Lottery.create({
     name: req.body.name,
-    type: req.body.type,
+    // type: req.body.type,
     activityTime: req.body.activityTime,
     startTime: moment(req.body.activityTime[0]).format('YYYY-MM-DD HH:mm:ss'),
     endTime: moment(req.body.activityTime[1]).format('YYYY-MM-DD HH:mm:ss'),
     num: req.body.num,
     img: req.body.img,
     status: req.body.status,
-    probabilityType: req.body.probabilityType,
-    probabilityRate: req.body.probabilityRate,
+    lottery1: req.body.lottery1,
+    probabilityType1: req.body.probabilityType1,
+    probabilityRate1: req.body.probabilityRate1,
+    lottery2: req.body.lottery2,
+    probabilityType2: req.body.probabilityType2,
+    probabilityRate2: req.body.probabilityRate2,
+    lottery3: req.body.lottery3,
+    probabilityType3: req.body.probabilityType3,
+    probabilityRate3: req.body.probabilityRate3,
     numberOfProbability: req.body.numberOfProbability,
     promotionType: req.body.promotionType,
     deductionAmount: req.body.deductionAmount,
@@ -62,8 +69,14 @@ const createLottery = asyncHandler(async (req, res) => {
 // @route   PUT /api/lotterys/:id
 // @access  Private
 const updateLottery = asyncHandler(async (req, res) => {
-  const { id, access } = req.query;
-  const lottery = await Lottery.findById(id);
+  const { id, access } = req.params;
+  let lottery = null;
+  if (_.isEmpty(id)) {
+    const { id, access } = req.query;
+    lottery = await Lottery.findById(id);
+  } else {
+    lottery = await Lottery.findById(id);
+  }
 
   if (!lottery) {
     res.status(400);
@@ -78,7 +91,7 @@ const updateLottery = asyncHandler(async (req, res) => {
     },
   };
 
-  const updatedLottery = await Lottery.findByIdAndUpdate(id, data, {
+  await Lottery.findByIdAndUpdate(id, data, {
     new: true,
   });
 
@@ -89,8 +102,8 @@ const updateLottery = asyncHandler(async (req, res) => {
 // @route   DELETE /api/lotterys/:id
 // @access  Private
 const deleteLottery = asyncHandler(async (req, res) => {
-  const { id } = req.query;
-  const lottery = await Lottery.findById(id);
+  const { id } = req.params;
+  const LotteryData = await Lottery.findById(id);
 
   if (!lottery) {
     res.status(400);
@@ -109,7 +122,7 @@ const deleteLottery = asyncHandler(async (req, res) => {
   //   throw new Error('User not authorized');
   // }
 
-  await Lottery.remove();
+  await LotteryData.remove();
 
   res.status(200).json({ id: req.params.id });
 });

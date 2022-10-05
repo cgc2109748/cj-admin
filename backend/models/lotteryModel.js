@@ -22,11 +22,11 @@ const lotterySchema = mongoose.Schema(
       type: String,
       required: [true, 'Please add a endTime value'],
     },
-    type: {
-      //奖项类型
-      type: String,
-      required: [true, 'Please add a type value'],
-    },
+    // type: {
+    //   //奖项类型
+    //   type: String,
+    //   required: [true, 'Please add a type value'],
+    // },
     num: {
       //奖品数量
       type: Number,
