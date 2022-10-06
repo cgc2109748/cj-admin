@@ -69,10 +69,12 @@ const createLottery = asyncHandler(async (req, res) => {
 // @route   PUT /api/lotterys/:id
 // @access  Private
 const updateLottery = asyncHandler(async (req, res) => {
-  const { id, access } = req.params;
+  let id = req.params.id;
+  let access = null;
   let lottery = null;
   if (_.isEmpty(id)) {
-    const { id, access } = req.query;
+    id = req.query.id;
+    access = req.query.access;
     lottery = await Lottery.findById(id);
   } else {
     lottery = await Lottery.findById(id);
@@ -86,6 +88,8 @@ const updateLottery = asyncHandler(async (req, res) => {
   let data = {
     ...req.body,
     ...{
+      startTime: moment(req.body.activityTime[0]).format('YYYY-MM-DD HH:mm:ss'),
+      endTime: moment(req.body.activityTime[1]).format('YYYY-MM-DD HH:mm:ss'),
       accessCount: Boolean(access) && Number(lottery.accessCount) + 1,
       updatedDate: moment().format('YYYY-MM-DD HH:mm:ss'),
     },
@@ -110,18 +114,6 @@ const deleteLottery = asyncHandler(async (req, res) => {
     throw new Error('Lottery not found');
   }
 
-  // Check for user
-  // if (!req.user) {
-  //   res.status(401);
-  //   throw new Error('User not found');
-  // }
-
-  // Make sure the logged in user matches the Lottery user
-  // if (Lottery.user.toString() !== req.user.id) {
-  //   res.status(401);
-  //   throw new Error('User not authorized');
-  // }
-
   await LotteryData.remove();
 
   res.status(200).json({ id: req.params.id });
@@ -130,6 +122,9 @@ const deleteLottery = asyncHandler(async (req, res) => {
 // @desc     Lottery
 // @route   POST /api/lotterys/lottery
 // @access  Private
+
+const lotteryLevel = ['一等奖', '二等奖', '三等奖', '四等奖', '五等奖'];
+
 const lottery = asyncHandler(async (req, res) => {
   const { id, times } = req.query;
   try {
@@ -146,15 +141,21 @@ const lottery = asyncHandler(async (req, res) => {
         console.log('-> times', times);
         // if (lottery.triggerCount )
         let roll = new Roll();
-        roll.add('中奖', lottery.probabilityRate * 100);
-        ``;
-        roll.add('谢谢参与！', 100 - lottery.probabilityRate * 100);
+        let thanksRate = 0;
+
+        for (let i = 0; i < lottery.num; i++) {
+          roll.add(lotteryLevel[i], lottery[`probabilityRate${i + 1}`] * 100);
+          thanksRate += lottery[`probabilityRate${i + 1}`] * 100;
+        }
+
+        console.log('-> thanksRate', thanksRate);
+        roll.add('谢谢参与！', 100 - thanksRate);
 
         let win = false;
         let result = [];
 
         if (times === 100 || times === '100') {
-          result.push('中奖');
+          result.push('一等奖');
         } else {
           // 循环抽奖
           for (let i = 0; i < times; i++) {

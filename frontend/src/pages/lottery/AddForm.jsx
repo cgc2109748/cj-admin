@@ -203,7 +203,7 @@ export const AddForm = (props) => {
                         size="sm"
                         {...form.getInputProps(`probabilityType${index + 1}`)}>
                         <Radio value="1" label="固定概率" />
-                        <Radio value="2" label="次数概率" />
+                        <Radio value="2" label="次数概率" disabled />
                       </RadioGroup>
                     </Grid.Col>
                     <Grid.Col span={6}>
